@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router'
 
 import App from '../App.vue'
-import Login from '../views/Login.vue'
+import { FacturaRoutes } from '../modules/factura/router/router.js'
 
 const routes = [
     { path: '/', component: App },
@@ -9,8 +9,8 @@ const routes = [
             requiresAuth: true,
         } 
     },
-    { path: '/login', component: Login},
     { path: '/verActa/:idActa/:modoOscuro', component: App },
+    ...FacturaRoutes,
 ]
 
 export const router = createRouter({

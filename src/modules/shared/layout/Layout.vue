@@ -2,19 +2,29 @@
   <div class="min-h-screen bg-gray-50">
     <!-- Sidebar -->
     <div 
-      class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0"
-      :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+      class="fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 ease-in-out lg:translate-x-0 group"
+      :class="{ 
+        '-translate-x-full': !sidebarOpen, 
+        'translate-x-0': sidebarOpen,
+        'w-16 hover:w-64': !sidebarExpanded,
+        'w-64': sidebarExpanded
+      }"
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
     >
       <!-- Logo y título -->
-      <div class="flex items-center justify-center h-16 px-4 bg-indigo-600">
+      <div class="flex items-center h-16 px-4 bg-indigo-600 transition-all duration-300">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
             </svg>
           </div>
-          <div class="ml-3">
-            <h1 class="text-white text-lg font-semibold">Farmacia</h1>
+          <div 
+            class="ml-3 transition-all duration-300 overflow-hidden"
+            :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+          >
+            <h1 class="text-white text-lg font-semibold whitespace-nowrap">Farmacia</h1>
           </div>
         </div>
       </div>
@@ -25,93 +35,138 @@
           <!-- Dashboard -->
           <router-link
             to="/dashboard"
-            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
             :class="isActiveRoute('/dashboard') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Dashboard' : ''"
           >
-            <svg class="mr-4 h-6 w-6" :class="isActiveRoute('/dashboard') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/dashboard') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v3H8V5z"></path>
             </svg>
-            Dashboard
-          </router-link>
-
-          <!-- Inventario -->
-          <router-link
-            to="/inventario"
-            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors"
-            :class="isActiveRoute('/inventario') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
-          >
-            <svg class="mr-4 h-6 w-6" :class="isActiveRoute('/inventario') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
-            Inventario
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Home
+            </span>
           </router-link>
 
           <!-- Ventas -->
           <router-link
             to="/ventas"
-            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
             :class="isActiveRoute('/ventas') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Ventas' : ''"
           >
-            <svg class="mr-4 h-6 w-6" :class="isActiveRoute('/ventas') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/ventas') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
-            Ventas
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Ventas
+            </span>
           </router-link>
 
-          <!-- Clientes -->
+          <!-- OrdenPedido -->
           <router-link
-            to="/clientes"
-            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors"
-            :class="isActiveRoute('/clientes') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            to="/orden-pedido"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
+            :class="isActiveRoute('/orden-pedido') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Orden de Pedido' : ''"
           >
-            <svg class="mr-4 h-6 w-6" :class="isActiveRoute('/clientes') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/orden-pedido') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
             </svg>
-            Clientes
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Orden de Pedido
+            </span>
+          </router-link>
+
+          <!-- Factura -->
+          <router-link
+            to="/factura"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
+            :class="isActiveRoute('/factura') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Factura' : ''"
+          >
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/factura') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Factura
+            </span>
           </router-link>
 
           <!-- Proveedores -->
           <router-link
             to="/proveedores"
-            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
             :class="isActiveRoute('/proveedores') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Proveedores' : ''"
           >
-            <svg class="mr-4 h-6 w-6" :class="isActiveRoute('/proveedores') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/proveedores') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
             </svg>
-            Proveedores
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Proveedores
+            </span>
           </router-link>
 
           <!-- Reportes -->
           <router-link
             to="/reportes"
-            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
             :class="isActiveRoute('/reportes') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Reportes' : ''"
           >
-            <svg class="mr-4 h-6 w-6" :class="isActiveRoute('/reportes') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/reportes') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
-            Reportes
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Reportes
+            </span>
           </router-link>
         </div>
 
         <!-- Sección de configuración -->
         <div class="mt-8">
-          <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <h3 
+            class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider transition-all duration-300 overflow-hidden"
+            :class="{ 'opacity-0 h-0': !isExpanded, 'opacity-100 h-auto': isExpanded }"
+          >
             Configuración
           </h3>
           <div class="mt-2 space-y-1">
             <router-link
               to="/configuracion"
-              class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors"
+              class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
               :class="isActiveRoute('/configuracion') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+              :title="!isExpanded ? 'Configuración' : ''"
             >
-              <svg class="mr-4 h-6 w-6" :class="isActiveRoute('/configuracion') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/configuracion') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
-              Configuración
+              <span 
+                class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+                :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+              >
+                Configuración
+              </span>
             </router-link>
           </div>
         </div>
@@ -126,7 +181,10 @@
     ></div>
 
     <!-- Contenido principal -->
-    <div class="lg:pl-64 flex flex-col flex-1">
+    <div 
+      class="flex flex-col flex-1 transition-all duration-300"
+      :class="{ 'lg:pl-16': !isExpanded, 'lg:pl-64': isExpanded }"
+    >
       <!-- Barra superior -->
       <div class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
         <!-- Botón del menú móvil -->
@@ -226,7 +284,7 @@
       <main class="flex-1">
         <div class="py-6">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <RouterView />
+            <Factura />
           </div>
         </div>
       </main>
@@ -235,13 +293,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
+import Factura from '../../factura/components/Factura.vue'
+
 
 // Estado reactivo
 const sidebarOpen = ref(window.innerWidth >= 1024) // Abierto por defecto en desktop
+const sidebarExpanded = ref(false) // Contraído por defecto
 const profileMenuOpen = ref(false)
 const searchQuery = ref('')
+
+// Computed property para determinar si el sidebar está expandido
+const isExpanded = computed(() => {
+  return window.innerWidth < 1024 ? sidebarOpen.value : sidebarExpanded.value
+})
 
 // Datos del usuario actual
 const currentUser = ref({
@@ -271,6 +337,19 @@ const logout = () => {
   // Lógica de cierre de sesión
   console.log('Cerrando sesión...')
   // Aquí puedes agregar la lógica para cerrar sesión
+}
+
+// Funciones para manejar la expansión del sidebar
+const handleMouseEnter = () => {
+  if (window.innerWidth >= 1024) {
+    sidebarExpanded.value = true
+  }
+}
+
+const handleMouseLeave = () => {
+  if (window.innerWidth >= 1024) {
+    sidebarExpanded.value = false
+  }
 }
 
 // Función para determinar si una ruta está activa
