@@ -29,56 +29,22 @@
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Teléfono</label>
-            <input v-model="form.telefono" type="text" required
+            <input v-model="form.telefono" type="text"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500" />
           </div>
 
-          <div class="md:col-span-2">
+          <div>
             <label class="block text-sm font-medium text-gray-700">Correo</label>
-            <input v-model="form.correo" type="email" required
+            <input v-model="form.correo" type="email"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500" />
           </div>
         </div>
 
-        <!-- Mensajes de estado -->
-        <div v-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm text-red-700">{{ error }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="success" class="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm text-green-700">{{ success }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-4 mt-6">
-          <button type="reset" @click="resetForm" :disabled="isLoading"
-            class="px-6 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
-            Limpiar
-          </button>
+        <div class="flex justify-end">
           <button type="submit" :disabled="isLoading"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-            <svg v-if="isLoading" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            {{ isLoading ? 'Guardando...' : 'Guardar' }}
+            class="px-6 py-2 rounded-lg text-white font-semibold transition duration-200"
+            :class="{ 'bg-blue-500 hover:bg-blue-600': !isLoading, 'bg-gray-400 cursor-not-allowed': isLoading }">
+            {{ isLoading ? 'Guardando...' : 'Guardar Proveedor' }}
           </button>
         </div>
       </form>
@@ -88,6 +54,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { toast } from 'vue3-toastify'
 import { ProveedoresServicio } from '@proveedores/services/ProveedoresServicio.js'
 
 const form = ref({
@@ -99,17 +66,10 @@ const form = ref({
 })
 
 const isLoading = ref(false)
-const error = ref('')
-const success = ref('')
 
-// Instancia del servicio
 const proveedoresService = new ProveedoresServicio()
 
 const guardarProveedor = async () => {
-  // Limpiar mensajes previos
-  error.value = ''
-  success.value = ''
-  
   const proveedor = {
     tipo_documento: form.value.tipo_documento,
     no_documento: form.value.no_documento,
@@ -117,40 +77,29 @@ const guardarProveedor = async () => {
     telefono: form.value.telefono,
     correo: form.value.correo
   }
-
-  // 👀 Verificación en consola
-  console.log("Proveedor a guardar:", proveedor)
-
+  // Cambiar la posición de la notificación a la parte superior derecha
   try {
     isLoading.value = true
-    
-    // Llamada al servicio para crear el proveedor
-    const resultado = await proveedoresService.crearProveedor(proveedor)
-    
-    console.log("Proveedor creado exitosamente:", resultado)
-    success.value = 'Proveedor guardado exitosamente'
-    
-    // Limpiar formulario después de guardar
+    await proveedoresService.crearProveedor(proveedor)
+    toast.success('Proveedor guardado exitosamente', {
+      position: 'bottom-right',
+      autoClose: 2000,
+    })
     resetForm()
-    
   } catch (err) {
-    console.error("Error al guardar proveedor:", err)
-    error.value = err.message || 'Error al guardar el proveedor. Intente nuevamente.'
+    console.error('Error al guardar proveedor:', err)
+    const errorMessage = err.message || 'Error al guardar el proveedor. Intente nuevamente.'
+    toast.error(errorMessage, { position: 'bottom-right', autoClose: 3000 })
   } finally {
     isLoading.value = false
   }
 }
 
 const resetForm = () => {
-  form.value = {
-    tipo_documento: '',
-    no_documento: '',
-    nombre: '',
-    telefono: '',
-    correo: ''
-  }
-  // Limpiar mensajes al resetear
-  error.value = ''
-  success.value = ''
+  form.value.tipo_documento = ''
+  form.value.no_documento = ''
+  form.value.nombre = ''
+  form.value.telefono = ''
+  form.value.correo = ''
 }
 </script>
