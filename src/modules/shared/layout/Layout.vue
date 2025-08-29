@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50">
+    
     <!-- Sidebar -->
     <div 
       class="fixed inset-y-0 left-0 z-50 bg-white shadow-lg transition-all duration-300 ease-in-out lg:translate-x-0 group"
@@ -51,21 +52,21 @@
             </span>
           </router-link>
 
-          <!-- Ventas -->
+          <!--Actas -->
           <router-link
-            to="/ventas"
+            to="/actas"
             class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
-            :class="isActiveRoute('/ventas') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
-            :title="!isExpanded ? 'Ventas' : ''"
+            :class="isActiveRoute('/actas') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Actas' : ''"
           >
-            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/ventas') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/actas') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
             </svg>
             <span 
               class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
               :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
             >
-              Ventas
+              Actas
             </span>
           </router-link>
 
@@ -122,6 +123,25 @@
               Proveedores
             </span>
           </router-link>
+
+          <!-- comparacion -->
+          <router-link
+            to="/comparacion-actas"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
+            :class="isActiveRoute('/comparacion') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'comparacion' : ''"
+          >
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/comparacion') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Comparacion
+            </span>
+          </router-link>
+
 
           <!-- Reportes -->
           <router-link
@@ -295,7 +315,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
-import Factura from '../../factura/components/Factura.vue'
+
 
 
 // Estado reactivo

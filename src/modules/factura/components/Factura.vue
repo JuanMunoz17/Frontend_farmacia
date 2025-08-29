@@ -63,9 +63,7 @@
         <div class="border-t pt-6">
           <h4 class="text-lg font-medium text-gray-800 mb-4">Archivo XML de la factura</h4>
 
-          <div
-            class="relative"
-          >
+          <div class="relative">
             <input
               ref="fileInput"
               type="file"
@@ -74,9 +72,7 @@
               @change="onFileChange"
             />
 
-            <div
-              class="group"
-            >
+            <div class="group">
               <div
                 @click="triggerBrowse"
                 @dragover.prevent="dragging = true"
@@ -245,8 +241,9 @@
           <button 
             type="submit"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            :disabled="isLoading"
           >
-            Guardar Factura
+            {{ isLoading ? 'Guardando...' : 'Guardar Factura' }}
           </button>
         </div>
       </form>
@@ -256,6 +253,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import { FacturaServicio } from '../services/FacturaServicio'
+import { toast } from 'vue3-toastify'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -266,6 +265,10 @@ const form = ref({
   observacion: '',
   detalles: []
 })
+
+const isLoading = ref(false)
+
+const facturaSrv = new FacturaServicio()
 
 /* ---------- Upload XML (1 archivo) ---------- */
 const fileInput = ref(null)
@@ -358,23 +361,45 @@ const calculateTotal = () => {
   }, 0)
 }
 
-const submitForm = () => {
-  // Validación: archivo XML requerido opcional? (si lo quieres obligatorio, descomenta)
+/* ---------- Envío del formulario ---------- */
+const submitForm = async () => {
+  // Validación: archivo XML requerido opcional
   // if (!uploadedFile.value) {
   //   fileError.value = 'Debe adjuntar el XML de la factura.'
   //   return
   // }
 
-  console.log('Factura a guardar:', form.value)
-  if (uploadedFile.value) {
-    console.log('Archivo XML:', {
-      name: uploadedFile.value.name,
-      size: uploadedFile.value.size,
-      type: uploadedFile.value.type
-    })
+  // Validar detalles
+  if (!form.value.detalles.length) {
+    toast.error('Debe agregar al menos un producto a la factura.')
+    return
   }
-  alert('Factura guardada exitosamente')
-  resetForm()
+
+  // Mapear detalles para el servicio
+  const detallesMapped = form.value.detalles.map(d => ({
+    producto: Number(d.producto_id),
+    valor_uni: parseFloat(d.valor_uni) || 0,
+    iva: Number(d.iva) || 0,
+    valor_iva: parseFloat(d.valor_iva) || 0,
+    valor_facturado: parseFloat(d.valor_facturado) || 0
+  }))
+
+  isLoading.value = true
+  try {
+    await facturaSrv.crearFacturaConDetalles({
+      no_factura: form.value.no_factura,
+      fecha_factura: form.value.fecha_factura,
+      observacion: form.value.observacion,
+      detalles: detallesMapped
+    })
+    toast.success('Factura guardada exitosamente')
+    resetForm()
+  } catch (error) {
+    console.error('Error al guardar la factura:', error)
+    toast.error('Error al guardar la factura. Por favor, intente nuevamente.')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const resetForm = () => {
