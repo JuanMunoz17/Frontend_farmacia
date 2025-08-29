@@ -2,16 +2,38 @@ import { createWebHistory, createRouter } from 'vue-router'
 
 import App from '../App.vue'
 import { FacturaRoutes } from '../modules/factura/router/router.js'
+import { ordenPedidoRoutes } from '../modules/orden-pedido/router/router.js'
+import { ProveedoresRoutes } from '../modules/proveedores/router/router.js'
 
 const routes = [
     { path: '/', component: App },
-    { path: '/rutaProtegida', component: App, meta: {
+/*     { path: '/rutaProtegida', component: App, meta: {
             requiresAuth: true,
         } 
     },
     { path: '/verActa/:idActa/:modoOscuro', component: App },
-    ...FacturaRoutes,
+ */
+    {
+        path: '/orden-pedido',
+        children: [
+            ...ordenPedidoRoutes,
+        ]
+    },
+    {
+        path: '/factura',
+        children: [
+            ...FacturaRoutes,
+        ]
+    },
+    {
+        path: '/proveedores',
+        children: [
+            ...ProveedoresRoutes,
+        ]
+    }
 ]
+
+console.log(routes)
 
 export const router = createRouter({
     history: createWebHistory(),
