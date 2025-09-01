@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow-lg p-6">
+    <div class="bg-white rounded-lg p-6">
       <h3 class="text-xl font-semibold text-gray-800 mb-6">Registro de Proveedores</h3>
       
       <form @submit.prevent="guardarProveedor" class="space-y-6">

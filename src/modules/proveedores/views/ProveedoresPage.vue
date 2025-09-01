@@ -36,6 +36,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase">Nombre</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase">Teléfono</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase">Correo</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase">Acciones</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -49,9 +50,20 @@
             <td class="px-6 py-4 whitespace-nowrap">{{ proveedor.nombre }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ proveedor.telefono }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ proveedor.correo }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-center">
+              <button
+                @click="editarProveedor(proveedor)"
+                class="text-blue-600 hover:text-blue-800 transition-colors p-2 rounded-full hover:bg-blue-50"
+                title="Editar proveedor"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+              </button>
+            </td>
           </tr>
           <tr v-if="proveedores.length === 0">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-400">No se encontraron proveedores.</td>
+            <td colspan="6" class="px-6 py-4 text-center text-gray-400">No se encontraron proveedores.</td>
           </tr>
         </tbody>
       </table>
@@ -81,7 +93,7 @@
     </div>
 
     <!-- Modal Formulario Proveedor -->
-    <div v-if="mostrarFormulario" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+    <div v-if="mostrarFormulario" class="fixed inset-0 z-50 flex items-center justify-center shadow-2xl bg-[rgba(0,0,0,0.5)]">
       <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative animate-fade-in">
         <button
           @click="cerrarFormulario"
@@ -89,7 +101,12 @@
         >
           &times;
         </button>
-        <ProveedoresForm @close="cerrarFormulario" @saved="onProveedorGuardado" />
+        <ProveedoresForm 
+          @close="cerrarFormulario" 
+          @saved="onProveedorGuardado" 
+          :proveedor="proveedorAEditar"
+          :modo-edicion="modoEdicion"
+        />
       </div>
     </div>
   </div>
@@ -108,6 +125,8 @@ const pagina = ref(1)
 const tamanio = ref(10)
 const busqueda = ref('')
 const mostrarFormulario = ref(false)
+const proveedorAEditar = ref(null)
+const modoEdicion = ref(false)
 
 const totalPaginas = computed(() => Math.ceil(total.value / tamanio.value))
 
@@ -140,6 +159,14 @@ const cambiarPagina = (nuevaPagina) => {
 
 const cerrarFormulario = () => {
   mostrarFormulario.value = false
+  proveedorAEditar.value = null
+  modoEdicion.value = false
+}
+
+const editarProveedor = (proveedor) => {
+  proveedorAEditar.value = { ...proveedor }
+  modoEdicion.value = true
+  mostrarFormulario.value = true
 }
 
 const onProveedorGuardado = () => {
