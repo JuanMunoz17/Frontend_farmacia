@@ -2,12 +2,10 @@
 import { BaseService } from '@/api/api'
 
 const RECURSO_ORDEN = '/ordenespedido'
-const RECURSO_DETALLE = '/ordenesdetalle'
 
 export class OrdenPedidoServicio extends BaseService {
   constructor(opciones = {}) {
     super(RECURSO_ORDEN, opciones)
-    this.detalleSrv = new OrdenDetalleServicio(opciones)
   }
 
   /**
@@ -23,43 +21,32 @@ export class OrdenPedidoServicio extends BaseService {
   }
 
   /**
-   * Obtener una orden de pedido por id (solo cabecera).
+   * Obtener una orden de pedido por id (incluye detalles gracias al serializer anidado).
    */
   async obtenerOrden(id, opts = {}) {
     return this.detalle(id, opts)
   }
 
   /**
-   * Crear una orden de pedido junto con sus detalles.
+   * Crear una orden de pedido junto con sus detalles (un solo POST).
    * @param {{no_orden:string, fecha_orden:string, descripcion_interno:string, aprobado:boolean, detalles:Array}} payload
    */
   async crearOrdenConDetalles(payload, opts = {}) {
     if (!payload) throw new Error('crearOrdenConDetalles: payload requerido')
 
-    // 1) Crear la orden (cabecera)
-    const ordenBody = this.#mapearPayloadOrden(payload)
-    const ordenCreada = await this.crear(ordenBody, opts)
-
-    // 2) Crear los detalles (si existen)
-    if (Array.isArray(payload.detalles) && payload.detalles.length > 0) {
-      for (const det of payload.detalles) {
-        const detalleBody = this.detalleSrv.mapearPayloadDetalle({
-          ...det,
-          orden_pedido: ordenCreada.id
-        })
-        await this.detalleSrv.crear(detalleBody, opts)
-      }
-    }
-
-    return ordenCreada
+    const body = this.#mapearPayloadOrden(payload)
+    return this.crear(body, opts) // backend devuelve {id, ..., detalles:[{id,...}]}
   }
 
   /**
-   * Editar una orden (solo la cabecera).
+   * Editar una orden (cabecera + detalles).
+   * El backend con serializer anidado se encargará de actualizar registros.
    */
-  async editarOrden(id, payload, parcial = true, opts = {}) {
+  async editarOrden(id, payload, parcial = false, opts = {}) {
     const body = this.#mapearPayloadOrden(payload)
-    return parcial ? this.actualizarParcial(id, body, opts) : this.actualizar(id, body, opts)
+    return parcial
+      ? this.actualizarParcial(id, body, opts)
+      : this.actualizar(id, body, opts)
   }
 
   // ---------- Helpers privados ----------
@@ -70,52 +57,19 @@ export class OrdenPedidoServicio extends BaseService {
       no_orden: (o.no_orden ?? '').toString().trim(),
       fecha_orden: o.fecha_orden ?? null,
       descripcion_interno: (o.descripcion_interno ?? '').toString().trim(),
-      aprobado: Boolean(o.aprobado ?? false)
-    }
-  }
-}
-
-// ================= DETALLE ORDEN =================
-export class OrdenDetalleServicio extends BaseService {
-  constructor(opciones = {}) {
-    super(RECURSO_DETALLE, opciones)
-  }
-
-  async buscarDetalles(params = {}, opts = {}) {
-    const query = {}
-    if (params.orden_pedido) query.orden_pedido = params.orden_pedido
-    if (params.pagina) query.page = params.pagina
-    if (params.tamanio) query.page_size = params.tamanio
-    return this.listar(query, opts)
-  }
-
-  async obtenerDetalle(id, opts = {}) {
-    return this.detalle(id, opts)
-  }
-
-  async crear(payload, opts = {}) {
-    const body = this.mapearPayloadDetalle(payload)
-    return super.crear(body, opts)
-  }
-
-  async editarDetalle(id, payload, parcial = true, opts = {}) {
-    const body = this.mapearPayloadDetalle(payload)
-    return parcial ? this.actualizarParcial(id, body, opts) : this.actualizar(id, body, opts)
-  }
-
-  // ---------- Helpers ----------
-  mapearPayloadDetalle(d) {
-    if (!d) throw new Error('mapearPayloadDetalle: payload requerido')
-
-    return {
-      orden_pedido: Number(d.orden_pedido),
-      producto: Number(d.producto),
-      cantidad_solicitada: Number(d.cantidad_solicitada ?? 0),
-      descripcion_orden: (d.descripcion_orden ?? '').toString().trim(),
-      valor_unidad: parseFloat(d.valor_unidad ?? 0),
-      iva: Number(d.iva ?? 0),
-      valor_iva: parseFloat(d.valor_iva ?? 0),
-      valor_total: parseFloat(d.valor_total ?? 0)
+      aprobado: Boolean(o.aprobado ?? false),
+      detalles: Array.isArray(o.detalles)
+        ? o.detalles.map((d) => ({
+            // no enviamos id porque lo genera el backend
+            producto: Number(d.producto),
+            cantidad_solicitada: Number(d.cantidad_solicitada ?? 0),
+            descripcion_orden: (d.descripcion_orden ?? '').toString().trim(),
+            valor_unidad: parseFloat(d.valor_unidad ?? 0),
+            iva: Number(d.iva ?? 0),
+            valor_iva: parseFloat(d.valor_iva ?? 0),
+            valor_total: parseFloat(d.valor_total ?? 0)
+          }))
+        : []
     }
   }
 }

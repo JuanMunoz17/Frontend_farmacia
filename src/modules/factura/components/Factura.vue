@@ -35,14 +35,22 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               Proveedor *
             </label>
+            <input
+              v-model="proveedorBusqueda"
+              @input="buscarProveedores"
+              type="text"
+              placeholder="Buscar proveedor..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+            />
             <select 
               v-model="form.proveedor_id" 
               required
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Seleccionar proveedor</option>
-              <option value="1">Proveedor 1</option>
-              <option value="2">Proveedor 2</option>
+              <option v-for="prov in proveedores" :key="prov.id" :value="prov.id">
+                {{ prov.nombre }} ({{ prov.no_documento }})
+              </option>
             </select>
           </div>
 
@@ -153,13 +161,21 @@
             <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+                <input
+                  v-model="detail.productoBusqueda"
+                  @input="buscarProductos(index)"
+                  type="text"
+                  placeholder="Buscar producto..."
+                  class="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2"
+                />
                 <select 
                   v-model="detail.producto_id" 
                   class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                 >
                   <option value="">Seleccionar</option>
-                  <option value="1">Producto 1</option>
-                  <option value="2">Producto 2</option>
+                  <option v-for="prod in productos[index]" :key="prod.id" :value="prod.id">
+                    {{ prod.nombre }}
+                  </option>
                 </select>
               </div>
 
@@ -252,8 +268,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { FacturaServicio } from '../services/FacturaServicio'
+import { ProveedoresServicio } from '../../proveedores/services/ProveedoresServicio'
+import { ProductoServicio } from '../../productos/services/ProductoServicio'
 import { toast } from 'vue3-toastify'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5MB
@@ -269,6 +287,25 @@ const form = ref({
 const isLoading = ref(false)
 
 const facturaSrv = new FacturaServicio()
+const proveedorSrv = new ProveedoresServicio()
+const productoSrv = new ProductoServicio()
+
+const proveedores = ref([])
+const proveedorBusqueda = ref('')
+
+const productos = reactive([]) // Array de arrays, uno por cada detalle
+
+const buscarProveedores = async () => {
+  const resp = await proveedorSrv.buscarProveedores({ buscar: proveedorBusqueda.value })
+  proveedores.value = resp.results || []
+}
+
+const buscarProductos = async (index) => {
+  const detalle = form.value.detalles[index]
+  if (!detalle) return
+  const resp = await productoSrv.buscarProductos({ buscar: detalle.productoBusqueda })
+  productos[index] = resp.results || []
+}
 
 /* ---------- Upload XML (1 archivo) ---------- */
 const fileInput = ref(null)
@@ -336,15 +373,18 @@ const formatBytes = (bytes) => {
 const addDetail = () => {
   form.value.detalles.push({
     producto_id: '',
+    productoBusqueda: '',
     valor_uni: 0,
     iva: 0,
     valor_iva: 0,
     valor_facturado: 0
   })
+  productos[form.value.detalles.length - 1] = []
 }
 
 const removeDetail = (index) => {
   form.value.detalles.splice(index, 1)
+  productos.splice(index, 1)
 }
 
 const calculateDetailValues = (detail) => {
