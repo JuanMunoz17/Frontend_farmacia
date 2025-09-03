@@ -88,23 +88,64 @@
             </span>
           </router-link>
 
-          <!-- Factura -->
-          <router-link
-            to="/factura"
-            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
-            :class="isActiveRoute('/factura') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
-            :title="!isExpanded ? 'Factura' : ''"
-          >
-            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/factura') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            <span 
-              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
-              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+          <!-- Factura con subitems -->
+          <div class="relative">
+            <button
+              @click="toggleFacturaSubmenu"
+              cursor="pointer"
+              class="group flex items-center w-full px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
+              :class="isActiveRoute('/factura') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+              :title="!isExpanded ? 'Factura' : ''"
             >
-              Factura
-            </span>
-          </router-link>
+              <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/factura') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span 
+                class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap flex-1 text-left"
+                :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+              >
+                Factura
+              </span>
+              <svg 
+                v-if="isExpanded"
+                class="ml-2 h-4 w-4 transition-transform duration-200"
+                :class="{ 'rotate-180': facturaSubmenuOpen }"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <!-- Submenu de Factura -->
+            <div 
+              v-if="facturaSubmenuOpen && isExpanded"
+              class="ml-6 mt-1 space-y-1 transition-all duration-300"
+            >
+              <router-link
+                to="/factura/automatico"
+                class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-all duration-300"
+                :class="isActiveRoute('/factura/automatico') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'"
+              >
+                <svg class="h-4 w-4 flex-shrink-0 mr-3" :class="isActiveRoute('/factura/automatico') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                </svg>
+                Registro Automático
+              </router-link>
+
+              <router-link
+                to="/factura/manual"
+                class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-all duration-300"
+                :class="isActiveRoute('/factura/manual') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'"
+              >
+                <svg class="h-4 w-4 flex-shrink-0 mr-3" :class="isActiveRoute('/factura/manual') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+                Registro Manual
+              </router-link>
+            </div>
+          </div>
 
           <!-- Proveedores -->
           <router-link
@@ -323,13 +364,14 @@ const sidebarOpen = ref(window.innerWidth >= 1024) // Abierto por defecto en des
 const sidebarExpanded = ref(false) // Contraído por defecto
 const profileMenuOpen = ref(false)
 const searchQuery = ref('')
+const facturaSubmenuOpen = ref(false) // Nueva variable para el submenu de factura
 
 // Computed property para determinar si el sidebar está expandido
 const isExpanded = computed(() => {
   return window.innerWidth < 1024 ? sidebarOpen.value : sidebarExpanded.value
 })
 
-// Datos del usuario actual
+// Datos del usuario currentUser
 const currentUser = ref({
   name: 'Juan Pérez',
   email: 'juan@farmacia.com',
@@ -357,6 +399,10 @@ const logout = () => {
   // Lógica de cierre de sesión
   console.log('Cerrando sesión...')
   // Aquí puedes agregar la lógica para cerrar sesión
+}
+
+const toggleFacturaSubmenu = () => {
+  facturaSubmenuOpen.value = !facturaSubmenuOpen.value
 }
 
 // Funciones para manejar la expansión del sidebar

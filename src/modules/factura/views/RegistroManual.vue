@@ -1,9 +1,14 @@
-<!-- src/components/Factura.vue -->
 <template>
   <div class="max-w-6xl mx-auto">
     <div class="bg-white rounded-lg shadow-lg p-6">
-      <h3 class="text-xl font-semibold text-gray-800 mb-6">Registro de Factura</h3>
+      <div class="border-b border-gray-200 pb-4 mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Registro Manual de Facturas</h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Ingresa manualmente los datos de la factura
+        </p>
+      </div>
 
+      <!-- Formulario de factura -->
       <form @submit.prevent="guardarFactura" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
@@ -160,9 +165,11 @@
           </button>
           <button
             type="submit"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            :disabled="cargando"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Guardar Factura
+            <span v-if="cargando">Guardando...</span>
+            <span v-else>Guardar Factura</span>
           </button>
         </div>
       </form>
@@ -184,7 +191,7 @@ const proveedorSrv = new ProveedoresServicio()
 const productoSrv = new ProductoServicio()
 
 export default {
-  name: 'Factura',
+  name: 'RegistroManual',
   data() {
     return {
       proveedoresOpts: [],
@@ -234,7 +241,6 @@ export default {
     },
     async guardarFactura() {
       // Validación mínima
-      // Ejemplo válido de no_factura: "12345" (solo números, sin letras ni símbolos)
       if (!/^\d+$/.test(this.factura.no_factura)) {
         toast.warning('No. de factura debe ser numérico', { autoClose: 2500 })
         return
@@ -297,4 +303,3 @@ export default {
   },
 }
 </script>
-
