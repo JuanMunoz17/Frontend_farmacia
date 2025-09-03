@@ -1,8 +1,6 @@
-
-
 export const ProveedoresRoutes = [
-    {
-        path: '',
-        component: () => import('../views/ProveedoresPage.vue'),
-    }
-]
+  {
+    path: "",
+    component: () => import("../views/ProveedoresPage.vue"),
+  },
+];

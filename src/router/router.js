@@ -4,6 +4,8 @@ import App from '../App.vue'
 import { FacturaRoutes } from '../modules/factura/router/router.js'
 import { ordenPedidoRoutes } from '../modules/orden-pedido/router/router.js'
 import { ProveedoresRoutes } from '../modules/proveedores/router/router.js'
+import { ProductosRoutes } from '../modules/productos/router/router.js'
+
 
 const routes = [
     { path: '/', component: App },
@@ -29,6 +31,12 @@ const routes = [
         path: '/proveedores',
         children: [
             ...ProveedoresRoutes,
+        ]
+    },
+    {
+        path:'/productos',
+        children: [
+            ...ProductosRoutes
         ]
     }
 ]

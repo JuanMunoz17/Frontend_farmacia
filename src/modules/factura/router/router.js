@@ -1,4 +1,3 @@
-import Factura from "../components/Factura.vue";
 import RegistroAutomatico from "../views/RegistroAutomatico.vue";
 import RegistroManual from "../views/RegistroManual.vue";
 

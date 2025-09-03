@@ -1,10 +1,12 @@
-import { Component } from "react";
+import ProductosPage from "../views/ProductosPage.vue";
 
 
 
 export const ProductosRoutes = [
     {
-        path:'',
-        Component: ()  => import('../componentes/ProductoForm.vue')
+        path: '',
+        component: ProductosPage,
     }
 ]
+
+

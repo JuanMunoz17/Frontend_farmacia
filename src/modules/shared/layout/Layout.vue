@@ -165,6 +165,25 @@
             </span>
           </router-link>
 
+            <router-link
+            to="/productos"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
+            :class="isActiveRoute('/productos') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'productos' : ''"
+            >
+            <!-- Icono de caja para productos -->
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/productos') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1.106-1.789l-7-4a2 2 0 00-1.788 0l-7 4A2 2 0 003 8v8a2 2 0 001.106 1.789l7 4a2 2 0 001.788 0l7-4A2 2 0 0021 16z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96l8.73 5.04 8.73-5.04" />
+            </svg>
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Productos
+            </span>
+            </router-link>
+
           <!-- comparacion -->
           <router-link
             to="/comparacion-actas"
@@ -183,6 +202,8 @@
             </span>
           </router-link>
 
+          
+          <!-- productos -->
 
           <!-- Reportes -->
           <router-link

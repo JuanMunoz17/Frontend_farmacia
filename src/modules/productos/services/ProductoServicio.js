@@ -1,57 +1,65 @@
 // src/modules/productos/services/ProductoServicio.js
-import { BaseService } from '@/api/api'
+import { BaseService } from "@/api/api";
 
-const RECURSO = '/productos'
+const RECURSO = "/productos";
 
 export class ProductoServicio extends BaseService {
   constructor(opciones = {}) {
-    super(RECURSO, opciones)
+    super(RECURSO, opciones);
   }
 
   /**
-   * Buscar productos con paginación o por nombre/id
+   * Listar / buscar productos con paginación.
+   * DRF espera: ?search=...&page=...&page_size=...
    */
   async buscarProductos(params = {}, opts = {}) {
-    const query = {}
-    if (params.buscar) query.search = params.buscar
-    if (params.pagina) query.page = params.pagina
-    if (params.tamanio) query.page_size = params.tamanio
-    return this.listar(query, opts)
+    const query = {};
+    if (params.buscar) query.search = params.buscar;
+    if (params.pagina) query.page = params.pagina;
+    if (params.tamanio) query.page_size = params.tamanio;
+    return this.listar(query, opts);
   }
 
-  /**
-   * Obtener producto por id
-   */
+  /** Obtener detalle por id */
   async obtenerProducto(id, opts = {}) {
-    return this.detalle(id, opts)
+    return this.detalle(id, opts);
   }
 
-  /**
-   * Crear producto
-   */
+  /** Crear producto */
   async crearProducto(payload, opts = {}) {
-    const body = this.#mapearPayload(payload)
-    return this.crear(body, opts)
+    const body = this.#mapearPayloadProducto(payload);
+    return this.crear(body, opts);
   }
 
-  /**
-   * Editar producto
-   */
+  /** Editar producto (PATCH por defecto) */
   async editarProducto(id, payload, parcial = true, opts = {}) {
-    const body = this.#mapearPayload(payload)
-    return parcial ? this.actualizarParcial(id, body, opts) : this.actualizar(id, body, opts)
+    const body = this.#mapearPayloadProducto(payload);
+    return parcial
+      ? this.actualizarParcial(id, body, opts)
+      : this.actualizar(id, body, opts);
   }
 
-  // --------- helper privado ---------
-  #mapearPayload(p) {
-    if (!p) throw new Error('mapearPayload: payload requerido')
+  // ---------- Helper privado ----------
+  #mapearPayloadProducto(p) {
+    if (!p) throw new Error("mapearPayloadProducto: payload requerido");
 
-    return {
-      nombre: (p.nombre ?? '').toString().trim(),
-      descripcion: (p.descripcion ?? '').toString().trim(),
-      precio: parseFloat(p.precio ?? 0),
-      stock: Number(p.stock ?? 0),
-      activo: Boolean(p.activo ?? true)
-    }
+    // Campos exactos del modelo/serializer
+    const out = {
+      cod_interno: (p.cod_interno ?? "").toString().trim(),
+      nombre: (p.nombre ?? "").toString().trim(),
+      presentacion: (p.presentacion ?? "").toString().trim(),
+      marca: (p.marca ?? "").toString().trim(),
+      fabrica: (p.fabrica ?? "").toString().trim(),
+      registro_invima: (p.registro_invima ?? "").toString().trim() || null,
+      cum: (p.cum ?? "").toString().trim() || null,
+      atc: (p.atc ?? "").toString().trim() || null,
+      estado: Boolean(p.estado ?? true),
+      fecha_vencimiento: p.fecha_vencimiento || null, // YYYY-MM-DD
+      observacion_precio: (p.observacion_precio ?? "").toString().trim(),
+    };
+
+    return out;
   }
 }
+
+export default ProductoServicio;
