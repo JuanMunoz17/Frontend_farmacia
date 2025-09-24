@@ -12,12 +12,12 @@
     </div>
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-      <div class="flex-1">
+      <div class="felx-1">
         <input
           v-model="busqueda"
           @keyup.enter="buscarProveedores"
           type="text"
-          placeholder="Buscar por nombre o documento..."
+          placeholder="Buscar por nombre o numero interno..."
           class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500"
         />
       </div>

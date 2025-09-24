@@ -51,16 +51,18 @@
               Home
             </span>
           </router-link>
+            <!-- Los iconos están tomados de Heroicons (https://heroicons.com/) -->
 
-          <!--Actas -->
-          <router-link
+            <!--Actas -->
+            <router-link
             to="/actas"
             class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
             :class="isActiveRoute('/actas') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
             :title="!isExpanded ? 'Actas' : ''"
-          >
+            >
+            <!-- Icono de archivo para Actas (Heroicons: ArchiveBox) -->
             <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/actas') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 01-2 2v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7a2 2 0 01-2-2V7zm5 7h8"/>
             </svg>
             <span 
               class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
@@ -68,8 +70,8 @@
             >
               Actas
             </span>
-          </router-link>
-
+            </router-link>
+          
           <!-- OrdenPedido -->
           <router-link
             to="/orden-pedido"
@@ -146,6 +148,24 @@
               </router-link>
             </div>
           </div>
+          <!-- Recepcion Pedido -->
+          <router-link
+            to="/actas-recepcion"
+            class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
+            :class="isActiveRoute('/actas-recepcion') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
+            :title="!isExpanded ? 'Recepción Pedido' : ''"
+          >
+            <!-- Icono de bandeja de entrada (Heroicons: Inbox) -->
+            <svg class="h-6 w-6 flex-shrink-0" :class="isActiveRoute('/actas-recepcion') ? 'text-indigo-500' : 'text-gray-400 group-hover:text-gray-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4m16 0H4m4 4h8" />
+            </svg>
+            <span 
+              class="ml-4 transition-all duration-300 overflow-hidden whitespace-nowrap"
+              :class="{ 'opacity-0 w-0': !isExpanded, 'opacity-100 w-auto': isExpanded }"
+            >
+              Recepción Pedido
+            </span>
+          </router-link>
 
           <!-- Proveedores -->
           <router-link
@@ -165,7 +185,9 @@
             </span>
           </router-link>
 
-            <router-link
+
+          <!-- Productos -->
+          <router-link
             to="/productos"
             class="group flex items-center px-2 py-2 text-base font-medium rounded-md transition-all duration-300"
             :class="isActiveRoute('/productos') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
@@ -201,9 +223,6 @@
               Comparacion
             </span>
           </router-link>
-
-          
-          <!-- productos -->
 
           <!-- Reportes -->
           <router-link

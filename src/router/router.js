@@ -5,6 +5,10 @@ import { FacturaRoutes } from '../modules/factura/router/router.js'
 import { ordenPedidoRoutes } from '../modules/orden-pedido/router/router.js'
 import { ProveedoresRoutes } from '../modules/proveedores/router/router.js'
 import { ProductosRoutes } from '../modules/productos/router/router.js'
+import { actaRoutes } from '../modules/acta/router/router.js'
+import { ActaRecepcionRoutes } from '../modules/recepcion/routes/router.js'
+
+
 
 
 const routes = [
@@ -14,7 +18,13 @@ const routes = [
         } 
     },
     { path: '/verActa/:idActa/:modoOscuro', component: App },
- */
+ */ 
+    {
+        path: '/actas',
+        children: [
+            ...actaRoutes,
+        ]
+    },
     {
         path: '/orden-pedido',
         children: [
@@ -37,6 +47,12 @@ const routes = [
         path:'/productos',
         children: [
             ...ProductosRoutes
+        ]
+    },
+    {
+        path:'/actas-recepcion',
+        children: [
+            ...ActaRecepcionRoutes
         ]
     }
 ]

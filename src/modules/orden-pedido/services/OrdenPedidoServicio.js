@@ -4,7 +4,7 @@
 
 import { BaseService } from '@/api/api'
 
-const RECURSO_ORDEN = '/ordenespedido'
+const RECURSO_ORDEN = '/ordenes-pedido'
 
 export class OrdenPedidoServicio extends BaseService {
   constructor(opciones = {}) {
@@ -44,7 +44,7 @@ function mapearPayloadOrden(o) {
   return {
     no_orden: (o.no_orden ?? '').toString().trim(),
     fecha_orden: o.fecha_orden ?? null,
-    proveedor: o.proveedor != null ? Number(o.proveedor) : null, // 👈 requerido por el serializer
+    proveedor: o.proveedor != null ? Number(o.proveedor) : null, // ID del proveedor
     descripcion_interno: (o.descripcion_interno ?? '').toString().trim(),
     aprobado: Boolean(o.aprobado ?? false),
     detalles: Array.isArray(o.detalles)

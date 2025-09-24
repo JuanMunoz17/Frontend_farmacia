@@ -1,13 +1,17 @@
 <!-- src/components/Factura.vue -->
 <template>
-  <div class="max-w-6xl mx-auto">
-    <div class="bg-white rounded-lg shadow-lg p-6">
-      <h3 class="text-xl font-semibold text-gray-800 mb-6">Registro de Factura</h3>
+  <div class="max-w-6xl mx-auto px-2">
+    <div class="bg-white rounded-lg shadow-lg p-4 md:p-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-6">
+        Registro de Factura
+      </h3>
 
       <form @submit.prevent="guardarFactura" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">No. Factura *</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >No. Factura *</label
+            >
             <input
               v-model.trim="factura.no_factura"
               type="text"
@@ -20,7 +24,9 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha *</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Fecha *</label
+            >
             <input
               v-model="factura.fecha_factura"
               type="date"
@@ -30,7 +36,9 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Proveedor *</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Proveedor *</label
+            >
             <select
               v-model.number="factura.proveedor"
               required
@@ -44,7 +52,9 @@
           </div>
 
           <div class="md:col-span-3">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Observación</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Observación</label
+            >
             <input
               v-model.trim="factura.observacion"
               type="text"
@@ -57,12 +67,16 @@
 
         <!-- Detalles -->
         <div class="border-t pt-6">
-          <div class="flex justify-between items-center mb-4">
-            <h4 class="text-lg font-medium text-gray-800">Detalle de la Factura</h4>
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-2"
+          >
+            <h4 class="text-lg font-medium text-gray-800">
+              Detalle de la Factura
+            </h4>
             <button
               type="button"
               @click="agregarDetalle"
-              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full md:w-auto"
             >
               Agregar Producto
             </button>
@@ -73,23 +87,46 @@
             :key="index"
             class="bg-gray-50 rounded-lg p-4 mb-4"
           >
-            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-7 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Producto</label
+                >
                 <select
                   v-model.number="det.producto"
                   required
                   class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                 >
                   <option :value="null">Seleccionar</option>
-                  <option v-for="prod in productosOpts" :key="prod.id" :value="prod.id">
+                  <option
+                    v-for="prod in productosOpts"
+                    :key="prod.id"
+                    :value="prod.id"
+                  >
                     {{ prod.nombre }}
                   </option>
                 </select>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Unidad</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Cantidad</label
+                >
+                <input
+                  v-model.number="det.cantidad"
+                  type="number"
+                  min="1"
+                  required
+                  class="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                  @input="recalcular(det)"
+                  placeholder="Cantidad"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Valor Unidad</label
+                >
                 <input
                   v-model.number="det.valor_uni"
                   type="number"
@@ -101,7 +138,9 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">IVA (%)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >IVA (%)</label
+                >
                 <input
                   v-model.number="det.iva"
                   type="number"
@@ -113,7 +152,9 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Valor IVA</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Valor IVA</label
+                >
                 <input
                   v-model.number="det.valor_iva"
                   type="number"
@@ -125,7 +166,9 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Facturado</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Valor Facturado</label
+                >
                 <input
                   v-model.number="det.valor_facturado"
                   type="number"
@@ -150,17 +193,19 @@
         </div>
 
         <!-- Botones -->
-        <div class="flex justify-end space-x-4 pt-6 border-t">
+        <div
+          class="flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-4 pt-6 border-t"
+        >
           <button
             type="button"
             @click="resetForm"
-            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors w-full md:w-auto"
           >
             Limpiar
           </button>
           <button
             type="submit"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full md:w-auto"
           >
             Guardar Factura
           </button>
@@ -171,81 +216,87 @@
 </template>
 
 <script>
-import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 // Servicios
-import { FacturaServicio} from '../services/FacturaServicio'
-import { ProveedoresServicio } from '../../proveedores/services/ProveedoresServicio'
-import { ProductoServicio } from '../../productos/services/ProductoServicio'
+import { FacturaServicio } from "../services/FacturaServicio";
+import { ProveedoresServicio } from "../../proveedores/services/ProveedoresServicio";
+import { ProductoServicio } from "../../productos/services/ProductoServicio";
 
-const facturaSrv = new FacturaServicio()
-const proveedorSrv = new ProveedoresServicio()
-const productoSrv = new ProductoServicio()
+const facturaSrv = new FacturaServicio();
+const proveedorSrv = new ProveedoresServicio();
+const productoSrv = new ProductoServicio();
 
 export default {
-  name: 'Factura',
+  name: "Factura",
   data() {
     return {
       proveedoresOpts: [],
       productosOpts: [],
       factura: {
-        no_factura: '',
-        fecha_factura: '',
+        no_factura: "",
+        fecha_factura: "",
         proveedor: null, // ID
-        observacion: '',
+        observacion: "",
         detalles: [],
       },
       cargando: false,
-    }
+    };
   },
   async created() {
     try {
       const [prov, prod] = await Promise.all([
         proveedorSrv.buscarProveedores({ pagina: 1, tamanio: 50 }),
         productoSrv.buscarProductos({ pagina: 1, tamanio: 50 }),
-      ])
-      this.proveedoresOpts = Array.isArray(prov?.results) ? prov.results : prov || []
-      this.productosOpts = Array.isArray(prod?.results) ? prod.results : prod || []
+      ]);
+      this.proveedoresOpts = Array.isArray(prov?.results)
+        ? prov.results
+        : prov || [];
+      this.productosOpts = Array.isArray(prod?.results)
+        ? prod.results
+        : prod || [];
     } catch (e) {
-      toast.error('Error cargando catálogos', { autoClose: 3000 })
+      toast.error("Error cargando catálogos", { autoClose: 3000 });
     }
-    this.agregarDetalle()
+    this.agregarDetalle();
   },
   methods: {
     agregarDetalle() {
       this.factura.detalles.push({
         producto: null,
+        cantidad: 1, // ← Nuevo campo cantidad, valor inicial 1
         valor_uni: 0,
         iva: 0,
         valor_iva: 0,
         valor_facturado: 0,
-      })
+      });
     },
     eliminarDetalle(index) {
-      this.factura.detalles.splice(index, 1)
-      if (this.factura.detalles.length === 0) this.agregarDetalle()
+      this.factura.detalles.splice(index, 1);
+      if (this.factura.detalles.length === 0) this.agregarDetalle();
     },
     recalcular(det) {
-      const vu = Number(det.valor_uni || 0)
-      const ivaPct = Number(det.iva || 0)
-      det.valor_iva = Number(((vu * ivaPct) / 100).toFixed(3))
-      det.valor_facturado = Number((vu + det.valor_iva).toFixed(3))
+      const vu = Number(det.valor_uni || 0);
+      const ivaPct = Number(det.iva || 0);
+      const cantidad = Number(det.cantidad || 1);
+      det.valor_iva = Number(((vu * cantidad * ivaPct) / 100).toFixed(3));
+      det.valor_facturado = Number((vu * cantidad + det.valor_iva).toFixed(3));
     },
     async guardarFactura() {
       // Validación mínima
       // Ejemplo válido de no_factura: "12345" (solo números, sin letras ni símbolos)
       if (!/^\d+$/.test(this.factura.no_factura)) {
-        toast.warning('No. de factura debe ser numérico', { autoClose: 2500 })
-        return
+        toast.warning("No. de factura debe ser numérico", { autoClose: 2500 });
+        return;
       }
       if (!this.factura.proveedor) {
-        toast.warning('Selecciona un proveedor', { autoClose: 2500 })
-        return
+        toast.warning("Selecciona un proveedor", { autoClose: 2500 });
+        return;
       }
       if (!this.factura.detalles.every((d) => d.producto != null)) {
-        toast.warning('Cada ítem debe tener producto', { autoClose: 2500 })
-        return
+        toast.warning("Cada ítem debe tener producto", { autoClose: 2500 });
+        return;
       }
 
       const payload = {
@@ -255,46 +306,51 @@ export default {
         observacion: this.factura.observacion,
         detalles: this.factura.detalles.map((d) => ({
           producto: d.producto, // ID
+          cantidad: d.cantidad, // ← Nuevo campo cantidad en el payload
           valor_uni: d.valor_uni,
           iva: d.iva,
           valor_iva: d.valor_iva,
           valor_facturado: d.valor_facturado,
         })),
-      }
+      };
 
-      const loadingId = toast.loading('Guardando factura...')
-      this.cargando = true
+      const loadingId = toast.loading("Guardando factura...");
+      this.cargando = true;
       try {
-        await facturaSrv.crearFactura(payload)
+        await facturaSrv.crearFactura(payload);
         toast.update(loadingId, {
-          render: 'Factura creada con éxito ✅',
-          type: 'success',
+          render: "Factura creada con éxito ✅",
+          type: "success",
           isLoading: false,
           autoClose: 2500,
-        })
-        this.resetForm()
+        });
+        this.resetForm();
       } catch (error) {
         const msg =
           error?.data?.detail ||
           error?.data?.non_field_errors?.[0] ||
-          'No fue posible crear la factura'
-        toast.update(loadingId, { render: `Error: ${msg}`, type: 'error', isLoading: false, autoClose: 3500 })
+          "No fue posible crear la factura";
+        toast.update(loadingId, {
+          render: `Error: ${msg}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 3500,
+        });
       } finally {
-        this.cargando = false
+        this.cargando = false;
       }
     },
     resetForm() {
       this.factura = {
-        no_factura: '',
-        fecha_factura: '',
+        no_factura: "",
+        fecha_factura: "",
         proveedor: null,
-        observacion: '',
+        observacion: "",
         detalles: [],
-      }
-      this.agregarDetalle()
-      toast.info('Formulario reiniciado', { autoClose: 2000 })
+      };
+      this.agregarDetalle();
+      toast.info("Formulario reiniciado", { autoClose: 2000 });
     },
   },
-}
+};
 </script>
-

@@ -1,4 +1,3 @@
-// src/modules/proveedores/services/ProveedoresServicio.js
 import { BaseService } from '@/api/api'
 
 const RECURSO = '/proveedores'

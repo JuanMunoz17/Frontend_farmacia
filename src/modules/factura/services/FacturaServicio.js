@@ -48,6 +48,7 @@ function mapearPayloadFactura(f) {
     detalles: Array.isArray(f.detalles)
       ? f.detalles.map((d) => ({
           producto: Number(d.producto),
+          cantidad: Number(d.cantidad ?? 0),
           valor_uni: parseFloat(d.valor_uni ?? 0),
           iva: Number(d.iva ?? 0),
           valor_iva: parseFloat(d.valor_iva ?? 0),
